@@ -1,0 +1,7 @@
+# ルートディレクトリ直下の.env
+.env
+
+# 設定情報
+docker/db/my.cnf
+docker/web/default.conf
+docker/app/php.ini

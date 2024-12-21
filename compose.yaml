@@ -1,0 +1,41 @@
+services:
+  app:
+    build:
+      context: ./docker/app
+      dockerfile: Dockerfile
+    container_name: pettomo-app
+    working_dir: /home/web/pettomo/laravel/
+    volumes:
+      - ./src:/home/web/pettomo/laravel/
+    ports:
+      - "9000:9000"
+    environment:
+      PHP_POST_MAX_SIZE: ${PHP_POST_MAX_SIZE}
+      PHP_MEMORY_LIMIT: ${PHP_MEMORY_LIMIT}
+    depends_on:
+      - db
+
+  db:
+    build:
+      context: ./docker/db
+      dockerfile: Dockerfile
+    container_name: pettomo-db
+    ports:
+      - "3306:3306"
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./docker/db/my.cnf:/etc/mysql/my.cnf
+
+  web:
+    image: nginx:alpine
+    container_name: pettomo-web
+    ports:
+      - "8080:80"
+    volumes:
+      - ./src:/home/web/pettomo/laravel
+      - ./docker/web/default.conf:/etc/nginx/conf.d/default.conf
+    depends_on:
+      - app
+
+volumes:
+  db-data:
